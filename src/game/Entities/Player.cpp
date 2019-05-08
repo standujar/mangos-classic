@@ -5593,7 +5593,7 @@ void Player::UpdateSpellTrainedSkills(uint32 spellId, bool apply)
                 {
                     SkillRaceClassInfoEntry const* rcinfo = rcitr->second;
                     // Check race if set
-                    if (rcinfo->raceMask && !(rcitr->raceMask & raceMask))
+                    if (rcinfo->raceMask && !(rcinfo->raceMask & raceMask))
                         continue;
                     // Check class if set
                     if (rcinfo->classMask && !(rcinfo->classMask & classMask))
