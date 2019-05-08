@@ -5583,7 +5583,24 @@ void Player::UpdateSpellTrainedSkills(uint32 spellId, bool apply)
                     continue;
 
                 // Check if obtainable
-                if (!GetSkillInfo(skillId, ([] (SkillRaceClassInfoEntry const& entry) { return !(entry.flags & SKILL_FLAG_NOT_TRAINABLE); })))
+                // if (!GetSkillInfo(skillId, ([] (SkillRaceClassInfoEntry const& entry) { return !(entry.flags & SKILL_FLAG_NOT_TRAINABLE); })))
+                const uint32 raceMask = getRaceMask();
+                const uint32 classMask = getClassMask();
+                auto rcbounds = sSpellMgr.GetSkillRaceClassInfoMapBounds(skillId);
+                bool obtainable = false;
+                // Check if player is eligible for rewarding the skill in this particular SkillLineAbility entry
+                for (auto rcitr = rcbounds.first; (rcitr != rcbounds.second && !obtainable); ++rcitr)
+                {
+                    SkillRaceClassInfoEntry const* rcinfo = rcitr->second;
+                    // Check race if set
+                    if (rcinfo->raceMask && !(rcitr->raceMask & raceMask))
+                        continue;
+                    // Check class if set
+                    if (rcinfo->classMask && !(rcinfo->classMask & classMask))
+                        continue;
+                    obtainable = true;
+                }
+                if (!obtainable)
                     continue;
 
                 switch (GetSkillRangeType(pSkill, info->racemask != 0))
